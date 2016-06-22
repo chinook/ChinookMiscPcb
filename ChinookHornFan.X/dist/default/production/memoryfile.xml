@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?> 
 <project>                                  
-  <executable name="dist/default/production/ChinookProjectTemplate.X.production.elf">                 
+  <executable name="dist/default/production/ChinookHornFan.X.production.elf">                 
     <memory name="program">                 
       <units>bytes</units>                 
       <length>531968</length>                 
-      <used>128944</used>                     
-      <free>403024</free>                     
+      <used>129008</used>                     
+      <free>402960</free>                     
     </memory>                              
     <memory name="data">              
       <units>bytes</units>                 
       <length>131072</length>                 
-      <used>73232</used>                     
-      <free>57840</free>                     
+      <used>72976</used>                     
+      <free>58096</free>                     
     </memory>                              
   </executable>                            
 </project>                                 

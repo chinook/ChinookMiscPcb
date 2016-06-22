@@ -74,7 +74,7 @@ void InitTimer(void)
   {
     Port.A.SetBits(BIT_3);    // LED4 on MAX32
   }
-  timerCounterValue = Timer.Open(TIMER_3, 500, SCALE_MS);   // Open Timer 3 with a period of 500 ms
+  timerCounterValue = Timer.Open(TIMER_3, 100, SCALE_US);
   if (timerCounterValue < 0)
   {
     Port.A.SetBits(BIT_3);    // LED4 on MAX32
@@ -164,30 +164,9 @@ void InitSpi(void)
 void InitPwm(void)
 {
 
-  // Open PWM1 using Timer3 with 50% duty cycle and 0% offset
-  Pwm.Open(PWM_1);
-  Pwm.SetDutyCycle  (PWM_1, 50);
-  Pwm.SetPulseOffset(PWM_1,  0);
-
-  // Open PWM2 using Timer3 with 50% duty cycle and 0% offset
-  Pwm.Open(PWM_2);
-  Pwm.SetDutyCycle  (PWM_2, 50);
-  Pwm.SetPulseOffset(PWM_2,  0);
-
-  // Open PWM3 using Timer3 with 50% duty cycle and 0% offset
   Pwm.Open(PWM_3);
-  Pwm.SetDutyCycle  (PWM_3, 50);
-  Pwm.SetPulseOffset(PWM_3,  0);
-
-  // Open PWM4 using Timer3 with 50% duty cycle and 0% offset
-  Pwm.Open(PWM_4);
-  Pwm.SetDutyCycle  (PWM_4, 50);
-  Pwm.SetPulseOffset(PWM_4,  0);
-
-  // Open PWM5 using Timer3 with 50% duty cycle and 0% offset
-  Pwm.Open(PWM_5);
-  Pwm.SetDutyCycle  (PWM_5, 50);
-  Pwm.SetPulseOffset(PWM_5,  0);
+  Pwm.SetDutyCycle  (PWM_3, 10);
+  Pwm.SetPulseOffset(PWM_3, 0);
 
 }
 
@@ -229,14 +208,37 @@ void InitPorts(void)
                     | BIT_6  | BIT_7  | BIT_8  | BIT_9
                     | BIT_12 | BIT_13 | BIT_14 | BIT_15 );
 
+   /* Setup IO LED */
+  Port.B.SetPinsDigitalOut(BIT_8);      // LED_DEBG0
+  Port.B.SetPinsDigitalOut(BIT_9);      // LED_DEBG1
+  Port.B.SetPinsDigitalOut(BIT_10);     // LED_DEBG2
+  Port.B.SetPinsDigitalOut(BIT_11);     // LED_DEBG3
+  Port.B.SetPinsDigitalOut(BIT_12);     // LED_DEBG4
+  Port.B.SetPinsDigitalOut(BIT_13);     // LED_CAN
+  Port.B.SetPinsDigitalOut(BIT_15);     // LED_ERROR
+  Port.F.SetPinsDigitalOut(BIT_3);      // LED_STATUS
 
-/*
- *    DEVELOPPER CODE HERE TO SET THE PINS USED TO THE RIGHT STATE
- */
-  Port.A.SetPinsDigitalOut(BIT_3);  // LED4 on MAX32
-  Port.C.SetPinsDigitalOut(BIT_1);  // LED5 on MAX32
-  Port.A.ClearBits(BIT_3);          // LED4 on MAX32
-  Port.C.ClearBits(BIT_1);          // LED5 on MAX32
+  /* Setup  IO switch */
+  Port.E.SetPinsDigitalIn(BIT_5);      // SW1
+  Port.E.SetPinsDigitalIn(BIT_6);      // SW2
+  Port.E.SetPinsDigitalIn(BIT_7);      // SW3
+  
+  /* Setup functions */
+  Port.D.SetPinsDigitalOut(BIT_2);      // PWM3
+  Port.D.SetPinsDigitalOut(BIT_3);      // MP3 Player
+  Port.F.SetPinsDigitalIn (BIT_0);      // CAN1 RX
+  Port.F.SetPinsDigitalOut(BIT_1);      // CAN1 TX
+  
+  Port.D.ClearBits(BIT_3);
+
+  LED_STATUS_OFF;
+  LED_ERROR_OFF;
+  LED_CAN_OFF;
+  LED_DEBUG4_OFF;
+  LED_DEBUG3_OFF;
+  LED_DEBUG2_OFF;
+  LED_DEBUG1_OFF;
+  LED_DEBUG0_OFF;
 
 }
 
@@ -318,20 +320,6 @@ void InitCan(void)
    Can.Initialize(CAN1, Can1MessageFifoArea, CAN_NB_CHANNELS, CAN_BUFFER_SIZE, FALSE);
    
    Can.ConfigInterrupt(CAN1, CAN1_INTERRUPT_PRIORITY, CAN1_INTERRUPT_SUBPRIORITY);
-   
-  /**Setup par defaut.
-   * CAN_CHANNEL0
-   * Mode: TX
-   * Type: SID
-   *
-   * CAN_CHANNEL2
-   * Mode: RX
-   * CAN_FILTER0: 0xC1, this configures the filter to accept with ID 0xC1
-   * CAN_FILTER_MASK0: 0x00, Configure CAN1 Filter Mask 0 to comprare no bits
-   * */
-   Can.Initialize(CAN2, Can2MessageFifoArea, CAN_NB_CHANNELS, CAN_BUFFER_SIZE, FALSE);
-   
-   Can.ConfigInterrupt(CAN2, CAN2_INTERRUPT_PRIORITY, CAN2_INTERRUPT_SUBPRIORITY);
 }
 
 

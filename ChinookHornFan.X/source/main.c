@@ -90,30 +90,61 @@ void main(void)
 
 // State machine init
 //=================================================================
-  if (Wdt.ReadEvent())    // If a system reset has occured
-  {
-    Wdt.Disable();        // Disable WDT and
-    Wdt.ClearEvent();     // the WDT event bit
-    pState = &StateError; // Go to StateError
-  }
-  else
-  {
-    pState = &StateInit;  // Else, initialize the system as usual
-  }
+//  if (Wdt.ReadEvent())    // If a system reset has occured
+//  {
+//    Wdt.Disable();        // Disable WDT and
+//    Wdt.ClearEvent();     // the WDT event bit
+//    pState = &StateError; // Go to StateError
+//  }
+//  else
+//  {
+//    pState = &StateInit;  // Else, initialize the system as usual
+//  }
 //=================================================================
+  
+  StateInit();
   
 	while(1)  //infinite loop
 	{
+    if (!SW1)
+    {
+      Pwm.SetDutyCycle(PWM_3, 250);
+      while (!SW1);
+      Pwm.SetDutyCycle(PWM_3, 10);
+    }
+//    else
+//    {
+//      Pwm.SetDutyCycle(PWM_3, 10);
+//      while(SW1);
+//    }
     
-  // State machine entry & exit point
-  //===========================================================
-		(*pState)();          // jump to next state
-  //===========================================================
-
-  // State scheduler
-  //===========================================================
-    StateScheduler();     // Decides which state will be next
-	//===========================================================
+    if (!SW3)
+    {
+      Port.D.SetBits(BIT_3);
+      Timer.DelayMs(100);
+      Port.D.ClearBits(BIT_3);
+      Timer.DelayMs(100);
+      Port.D.SetBits(BIT_3);
+      Timer.DelayMs(100);
+      Port.D.ClearBits(BIT_3);
+      Timer.DelayMs(100);
+      
+      while (!SW3);
+    }
+//    else
+//    {
+//      Port.D.ClearBits(BIT_3);
+//    }
+    
+//  // State machine entry & exit point
+//  //===========================================================
+//		(*pState)();          // jump to next state
+//  //===========================================================
+//
+//  // State scheduler
+//  //===========================================================
+//    StateScheduler();     // Decides which state will be next
+//	//===========================================================
     
 	}
 } //END MAIN CODE

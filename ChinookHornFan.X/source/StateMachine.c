@@ -165,17 +165,17 @@ void StateInit(void)
   INTDisableInterrupts();   // Disable all interrupts of the system.
 
   INIT_PORTS;
-  INIT_SPI;
+//  INIT_SPI;
   INIT_TIMER;
-  INIT_INPUT_CAPTURE;
+//  INIT_INPUT_CAPTURE;
   INIT_PWM;
-  INIT_ADC;
-  INIT_UART;
-  INIT_SKADI;
-  INIT_CAN;
-  INIT_I2C;
-  INIT_WDT;
-  START_INTERRUPTS;
+//  INIT_ADC;
+//  INIT_UART;
+//  INIT_SKADI;
+//  INIT_CAN;
+//  INIT_I2C;
+//  INIT_WDT;
+//  START_INTERRUPTS;
 
 }
 
