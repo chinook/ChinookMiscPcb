@@ -229,7 +229,8 @@ void InitPorts(void)
   Port.F.SetPinsDigitalIn (BIT_0);      // CAN1 RX
   Port.F.SetPinsDigitalOut(BIT_1);      // CAN1 TX
   
-  Port.D.ClearBits(BIT_3);
+//  Port.D.ClearBits(BIT_3);
+  Port.D.SetBits(BIT_3);
 
   LED_STATUS_OFF;
   LED_ERROR_OFF;

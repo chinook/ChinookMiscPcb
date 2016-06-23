@@ -120,14 +120,14 @@ void main(void)
     
     if (!SW3)
     {
-      Port.D.SetBits(BIT_3);
-      Timer.DelayMs(100);
+//      Port.D.SetBits(BIT_3);
+//      Timer.DelayMs(100);
       Port.D.ClearBits(BIT_3);
-      Timer.DelayMs(100);
+      Timer.DelayMs(50);
       Port.D.SetBits(BIT_3);
-      Timer.DelayMs(100);
-      Port.D.ClearBits(BIT_3);
-      Timer.DelayMs(100);
+//      Timer.DelayMs(100);
+//      Port.D.ClearBits(BIT_3);
+//      Timer.DelayMs(100);
       
       while (!SW3);
     }
