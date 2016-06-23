@@ -40,6 +40,22 @@
 // VARIABLE DECLARATIONS
 //==============================================================================
 
+// All the buttons used. 3 on the steering wheel, 3 on the board
+volatile sButtonStates_t buttons =
+{
+  .chng   .byte = 0
+ ,.buttons.byte = 0
+
+ // switches on board are at 1 when not pressed
+ ,.buttons.bits.boardSw1 = 1
+ ,.buttons.bits.boardSw2 = 1
+ ,.buttons.bits.boardSw3 = 1
+};
+
+BOOL oFanIsOn = 0;
+UINT8 ledStates = 0;
+
+extern volatile BOOL oTimer1;
 
 //==============================================================================
 // MAIN CODE
@@ -106,36 +122,148 @@ void main(void)
   
 	while(1)  //infinite loop
 	{
-    if (!SW1)
+    // <editor-fold defaultstate="collapsed" desc="LEDs">
+    if (oTimer1)
     {
-      Pwm.SetDutyCycle(PWM_3, 250);
-      while (!SW1);
-      Pwm.SetDutyCycle(PWM_3, 10);
+      oTimer1 = 0;
+      switch (ledStates)
+      {
+        case 0 :
+          LED_DEBUG4_ON;
+          LED_DEBUG3_ON;
+          LED_DEBUG2_OFF;
+          LED_DEBUG1_OFF;
+          LED_DEBUG0_OFF;
+          ledStates = 1;
+          break;
+        case 1 :
+          LED_DEBUG4_OFF;
+          LED_DEBUG3_ON;
+          LED_DEBUG2_ON;
+          LED_DEBUG1_OFF;
+          LED_DEBUG0_OFF;
+          ledStates = 2;
+          break;
+        case 2 :
+          LED_DEBUG4_OFF;
+          LED_DEBUG3_OFF;
+          LED_DEBUG2_ON;
+          LED_DEBUG1_ON;
+          LED_DEBUG0_OFF;
+          ledStates = 3;
+          break;
+        case 3 :
+          LED_DEBUG4_OFF;
+          LED_DEBUG3_OFF;
+          LED_DEBUG2_OFF;
+          LED_DEBUG1_ON;
+          LED_DEBUG0_ON;
+          ledStates = 4;
+          break;
+        case 4 :
+          LED_DEBUG4_ON;
+          LED_DEBUG3_OFF;
+          LED_DEBUG2_OFF;
+          LED_DEBUG1_OFF;
+          LED_DEBUG0_ON;
+          ledStates = 0;
+          break;
+        default :
+          ledStates = 0;
+          break;
+      }
     }
-//    else
-//    {
-//      Pwm.SetDutyCycle(PWM_3, 10);
-//      while(SW1);
-//    }
+    // </editor-fold>
     
-    if (!SW3)
+    // <editor-fold defaultstate="collapsed" desc="Check changes on board">
+    // <editor-fold defaultstate="collapsed" desc="Change on SW1 on board">
+    if (buttons.buttons.bits.boardSw1 != SW1)
     {
-//      Port.D.SetBits(BIT_3);
-//      Timer.DelayMs(100);
-      Port.D.ClearBits(BIT_3);
-      Timer.DelayMs(50);
-      Port.D.SetBits(BIT_3);
-//      Timer.DelayMs(100);
-//      Port.D.ClearBits(BIT_3);
-//      Timer.DelayMs(100);
+      buttons.buttons.bits.boardSw1    = SW1;
+      buttons.chng.bits.boardSw1       =   1;
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Change on SW2 on board">
+    if (buttons.buttons.bits.boardSw2 != SW2)
+    {
+      buttons.buttons.bits.boardSw2    = SW2;
+      buttons.chng.bits.boardSw2       =   1;
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Change on SW3 on board">
+    if (buttons.buttons.bits.boardSw3 != SW3)
+    {
+      buttons.buttons.bits.boardSw3    = SW3;
+      buttons.chng.bits.boardSw3       =   1;
+    }
+    // </editor-fold>
+    // </editor-fold>
+    
+    // <editor-fold defaultstate="collapsed" desc="Assess changes">
+    if (buttons.chng.bits.steerWheelSw1)
+    {
+      buttons.chng.bits.steerWheelSw1 = 0;
       
-      while (!SW3);
+      if (1 == buttons.buttons.bits.steerWheelSw1)
+      {
+        if (!oFanIsOn)
+        {
+          Pwm.SetDutyCycle(PWM_3, 500);
+          oFanIsOn = 1;
+        }
+        else
+        {
+          Pwm.SetDutyCycle(PWM_3, 10);
+          oFanIsOn = 0;
+        }
+      }
     }
-//    else
-//    {
-//      Port.D.ClearBits(BIT_3);
-//    }
+    if (buttons.chng.bits.boardSw1)
+    {
+      buttons.chng.bits.boardSw1 = 0;
+      
+      if (0 == buttons.buttons.bits.boardSw1)
+      {
+        if (!oFanIsOn)
+        {
+          Pwm.SetDutyCycle(PWM_3, 500);
+          oFanIsOn = 1;
+        }
+        else
+        {
+          Pwm.SetDutyCycle(PWM_3, 10);
+          oFanIsOn = 0;
+        }
+      }
+    }
     
+    if (buttons.chng.bits.steerWheelSw10)
+    {
+      buttons.chng.bits.steerWheelSw10 = 0;
+      
+      if (1 == buttons.buttons.bits.steerWheelSw10)
+      {
+        Port.D.ClearBits(BIT_3);
+        Timer.DelayMs(50);
+        Port.D.SetBits(BIT_3);
+      }
+    }
+    if (buttons.chng.bits.boardSw3)
+    {
+      buttons.chng.bits.boardSw3 = 0;
+      
+      if (0 == buttons.buttons.bits.boardSw3)
+      {
+        Port.D.ClearBits(BIT_3);
+        Timer.DelayMs(50);
+        Port.D.SetBits(BIT_3);
+      }
+    }
+    // </editor-fold>
+    
+    // <editor-fold defaultstate="collapsed" desc="Commented code for state machine">
 //  // State machine entry & exit point
 //  //===========================================================
 //		(*pState)();          // jump to next state
@@ -145,6 +273,6 @@ void main(void)
 //  //===========================================================
 //    StateScheduler();     // Decides which state will be next
 //	//===========================================================
-    
+    // </editor-fold>
 	}
 } //END MAIN CODE

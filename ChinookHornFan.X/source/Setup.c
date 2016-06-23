@@ -64,7 +64,7 @@ void InitTimer(void)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //	Open timers
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%
-  timerCounterValue = Timer.Open(TIMER_1, 500, SCALE_MS);   // Open Timer 1 with a period of 500 ms
+  timerCounterValue = Timer.Open(TIMER_1, 100, SCALE_MS);
   if (timerCounterValue < 0)
   {
     Port.A.SetBits(BIT_3);    // LED4 on MAX32
@@ -235,11 +235,11 @@ void InitPorts(void)
   LED_STATUS_OFF;
   LED_ERROR_OFF;
   LED_CAN_OFF;
-  LED_DEBUG4_OFF;
-  LED_DEBUG3_OFF;
-  LED_DEBUG2_OFF;
-  LED_DEBUG1_OFF;
-  LED_DEBUG0_OFF;
+  LED_DEBUG4_ON;
+  LED_DEBUG3_ON;
+  LED_DEBUG2_ON;
+  LED_DEBUG1_ON;
+  LED_DEBUG0_ON;
 
 }
 
@@ -308,19 +308,13 @@ void InitSkadi(void)
 //===========================
 void InitCan(void)
 {
-  /**Setup par defaut.
-   * CAN_CHANNEL0
-   * Mode: TX
-   * Type: SID
-   *
-   * CAN_CHANNEL1
-   * Mode: RX
-   * CAN_FILTER0: 0xC1, this configures the filter to accept with ID 0xC1
-   * CAN_FILTER_MASK0: 0x00, Configure CAN1 Filter Mask 0 to comprare no bits
-   * */
-   Can.Initialize(CAN1, Can1MessageFifoArea, CAN_NB_CHANNELS, CAN_BUFFER_SIZE, FALSE);
+  Can.Initialize(CAN1, Can1MessageFifoArea, CAN_NB_CHANNELS, CAN_BUFFER_SIZE, FALSE);
+
+  // Switches from steering wheel
+  Can.SetChannel(CAN1, CAN_CHANNEL1, 8, RX);
+  Can.SetChannelMask(CAN1, CAN_CHANNEL1, CAN_FILTER0, 0x42, CAN_FILTER_MASK0, 0x7FF);
    
-   Can.ConfigInterrupt(CAN1, CAN1_INTERRUPT_PRIORITY, CAN1_INTERRUPT_SUBPRIORITY);
+  Can.ConfigInterrupt(CAN1, CAN1_INTERRUPT_PRIORITY, CAN1_INTERRUPT_SUBPRIORITY);
 }
 
 
@@ -465,10 +459,10 @@ void StartInterrupts(void)
 // Enable timer interrupts
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   Timer.EnableInterrupt(TIMER_1);
-  Timer.EnableInterrupt(TIMER_2);
-  Timer.EnableInterrupt(TIMER_3);
-  Timer.EnableInterrupt(TIMER_4);
-  Timer.EnableInterrupt(TIMER_5);
+//  Timer.EnableInterrupt(TIMER_2);
+//  Timer.EnableInterrupt(TIMER_3);
+//  Timer.EnableInterrupt(TIMER_4);
+//  Timer.EnableInterrupt(TIMER_5);
 
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -477,152 +471,30 @@ void StartInterrupts(void)
 // enabled when writing to the user's TX FIFO buffer
 // with Uart.PutTxFifoBuffer(...)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-  Uart.EnableRxInterrupts (UART1);  // Enable RX Interrupts for UART1
-  Uart.DisableTxInterrupts(UART1);  // Disable TX Interrupts for UART1
-
-  Uart.EnableRxInterrupts (UART2);  // Enable RX Interrupts for UART2
-  Uart.DisableTxInterrupts(UART2);  // Disable TX Interrupts for UART2
-
-#ifndef __32MX320F128H__            // Uno32 doesn't have UART3-6
-  Uart.EnableRxInterrupts (UART3);  // Enable RX Interrupts for UART3
-  Uart.DisableTxInterrupts(UART3);  // Disable TX Interrupts for UART3
-
-  Uart.EnableRxInterrupts (UART4);  // Enable RX Interrupts for UART4
-  Uart.DisableTxInterrupts(UART4);  // Disable TX Interrupts for UART4
-
-  Uart.EnableRxInterrupts (UART5);  // Enable RX Interrupts for UART5
-  Uart.DisableTxInterrupts(UART5);  // Disable TX Interrupts for UART5
-
-  Uart.EnableRxInterrupts (UART6);  // Enable RX Interrupts for UART6
-  Uart.DisableTxInterrupts(UART6);  // Disable TX Interrupts for UART6
-#endif
-
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-// Enable SPI interrupts             // Not functionnal yet
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-//#ifdef __32MX795F512L__   // SPI1 only on this device
-//  Spi.EnableRxInterrupts(SPI1);   // Enable RX Interrupts for SPI1
-//  Spi.EnableTxInterrupts(SPI1);   // Enable TX Interrupts for SPI1
-//#endif
-//
-//  Spi.EnableRxInterrupts(SPI2);   // Enable RX Interrupts for SPI2
-//  Spi.EnableTxInterrupts(SPI2);   // Enable TX Interrupts for SPI2
-//
-//  Spi.EnableRxInterrupts(SPI3);   // Enable RX Interrupts for SPI3
-//  Spi.EnableTxInterrupts(SPI3);   // Enable TX Interrupts for SPI3
-//
-//  Spi.EnableRxInterrupts(SPI4);   // Enable RX Interrupts for SPI4
-//  Spi.EnableTxInterrupts(SPI4);   // Enable TX Interrupts for SPI4
+//  Uart.EnableRxInterrupts (UART6);  // Enable RX Interrupts for UART6
+//  Uart.DisableTxInterrupts(UART6);  // Disable TX Interrupts for UART6
 
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // Enable ADC interrupts
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-  Adc.EnableInterrupts();   // Works only when not in manual mode
+//  Adc.EnableInterrupts();   // Works only when not in manual mode
 
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // Enable InputCapture interrupts
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-  InputCapture.EnableInterrupt(IC1);
-  InputCapture.EnableInterrupt(IC2);
-  InputCapture.EnableInterrupt(IC3);
-  InputCapture.EnableInterrupt(IC4);
-  InputCapture.EnableInterrupt(IC5);
+//  InputCapture.EnableInterrupt(IC1);
+//  InputCapture.EnableInterrupt(IC2);
+//  InputCapture.EnableInterrupt(IC3);
+//  InputCapture.EnableInterrupt(IC4);
+//  InputCapture.EnableInterrupt(IC5);
 
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // Enable CAN interrupts
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   Can.EnableInterrupt(CAN1);
-  Can.EnableInterrupt(CAN2);
-
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-// Enable I2C interrupts
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-  err = I2c.EnableInterrupt (I2C1, I2C_MASTER_INTERRUPT);
-  if (err < 0)
-  {
-//    LED_ERROR_ON;
-  }
-  err = I2c.DisableInterrupt(I2C1, I2C_SLAVE_INTERRUPT);
-  if (err < 0)
-  {
-//    LED_ERROR_ON;
-  }
-  err = I2c.DisableInterrupt(I2C1, I2C_BUS_COLLISION_INTERRUPT);
-  if (err < 0)
-  {
-//    LED_ERROR_ON;
-  }
-#ifndef __32MX795F512H__          // Chinook boards don't have I2C2
-  err = I2c.EnableInterrupt (I2C2, I2C_MASTER_INTERRUPT);
-  if (err < 0)
-  {
-//    LED_ERROR_ON;
-  }
-  err = I2c.DisableInterrupt(I2C2, I2C_SLAVE_INTERRUPT);
-  if (err < 0)
-  {
-//    LED_ERROR_ON;
-  }
-  err = I2c.DisableInterrupt(I2C2, I2C_BUS_COLLISION_INTERRUPT);
-  if (err < 0)
-  {
-//    LED_ERROR_ON;
-  }
-#endif
-#ifndef __32MX320F128H__          // Uno32 doesn't have I2C3, I2C4 and I2C5
-  err = I2c.EnableInterrupt (I2C3, I2C_MASTER_INTERRUPT);
-  if (err < 0)
-  {
-//    LED_ERROR_ON;
-  }
-  err = I2c.DisableInterrupt(I2C3, I2C_SLAVE_INTERRUPT);
-  if (err < 0)
-  {
-//    LED_ERROR_ON;
-  }
-  err = I2c.DisableInterrupt(I2C3, I2C_BUS_COLLISION_INTERRUPT);
-  if (err < 0)
-  {
-//    LED_ERROR_ON;
-  }
-  
-  err = I2c.EnableInterrupt (I2C4, I2C_MASTER_INTERRUPT);
-  if (err < 0)
-  {
-//    LED_ERROR_ON;
-  }
-  err = I2c.DisableInterrupt(I2C4, I2C_SLAVE_INTERRUPT);
-  if (err < 0)
-  {
-//    LED_ERROR_ON;
-  }
-  err = I2c.DisableInterrupt(I2C4, I2C_BUS_COLLISION_INTERRUPT);
-  if (err < 0)
-  {
-//    LED_ERROR_ON;
-  }
-  
-  err = I2c.EnableInterrupt (I2C5, I2C_MASTER_INTERRUPT);
-  if (err < 0)
-  {
-//    LED_ERROR_ON;
-  }
-  err = I2c.DisableInterrupt(I2C5, I2C_SLAVE_INTERRUPT);
-  if (err < 0)
-  {
-//    LED_ERROR_ON;
-  }
-  err = I2c.DisableInterrupt(I2C5, I2C_BUS_COLLISION_INTERRUPT);
-  if (err < 0)
-  {
-//    LED_ERROR_ON;
-  }
-#endif
 
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

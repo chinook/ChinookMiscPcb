@@ -160,7 +160,8 @@ BYTE Can1MessageFifoArea [ CAN_NB_CHANNELS     // Space used by CAN
                          * CAN_TX_RX_MESSAGE_SIZE_BYTES 
                          ];
 
-#define HORN_FAN_BOARD_SID                0x80
-#define HORN_FAN_DISCONNECT_SID           0x81
+#define HORN_FAN_BOARD_SID                0x90
+#define HORN_FAN_DISCONNECT_SID           0x91
+#define HORN_FAN_RPM_SID                  0x92
 
 #endif	/* __SETUP_H__ */

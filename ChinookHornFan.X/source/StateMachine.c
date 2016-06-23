@@ -172,10 +172,10 @@ void StateInit(void)
 //  INIT_ADC;
 //  INIT_UART;
 //  INIT_SKADI;
-//  INIT_CAN;
+  INIT_CAN;
 //  INIT_I2C;
 //  INIT_WDT;
-//  START_INTERRUPTS;
+  START_INTERRUPTS;
 
 }
 
