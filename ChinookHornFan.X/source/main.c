@@ -120,6 +120,8 @@ void main(void)
   
   StateInit();
   
+  // The tachy generates 2 pulses per revolution of the fan
+  
 	while(1)  //infinite loop
 	{
     // <editor-fold defaultstate="collapsed" desc="LEDs">
