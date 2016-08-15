@@ -1,2 +1,7 @@
 *.o
 *.d
+Makefile-*
+Package-*
+*/build/*
+*/dist/*
+*/dist/
