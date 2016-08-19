@@ -52,7 +52,8 @@ volatile sButtonStates_t buttons =
  ,.buttons.bits.boardSw3 = 1
 };
 
-BOOL oFanIsOn = 0;
+//BOOL oFanIsOn = 0;
+BOOL oFanIsOn = 1;
 UINT8 ledStates = 0;
 
 extern volatile BOOL oTimer1;
@@ -208,19 +209,19 @@ void main(void)
     {
       buttons.chng.bits.steerWheelSw1 = 0;
       
-      if (1 == buttons.buttons.bits.steerWheelSw1)
-      {
-        if (!oFanIsOn)
-        {
-          Pwm.SetDutyCycle(PWM_3, 500);
-          oFanIsOn = 1;
-        }
-        else
-        {
-          Pwm.SetDutyCycle(PWM_3, 10);
-          oFanIsOn = 0;
-        }
-      }
+//      if (1 == buttons.buttons.bits.steerWheelSw1)
+//      {
+//        if (!oFanIsOn)
+//        {
+//          Pwm.SetDutyCycle(PWM_3, 500);
+//          oFanIsOn = 1;
+//        }
+//        else
+//        {
+//          Pwm.SetDutyCycle(PWM_3, 10);
+//          oFanIsOn = 0;
+//        }
+//      }
     }
     if (buttons.chng.bits.boardSw1)
     {

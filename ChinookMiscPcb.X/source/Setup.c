@@ -165,7 +165,8 @@ void InitPwm(void)
 {
 
   Pwm.Open(PWM_3);
-  Pwm.SetDutyCycle  (PWM_3, 10);
+//  Pwm.SetDutyCycle  (PWM_3, 10);
+  Pwm.SetDutyCycle  (PWM_3, 500);
   Pwm.SetPulseOffset(PWM_3, 0);
 
 }
